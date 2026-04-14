@@ -1,114 +1,113 @@
 # Jenkins Installation on AWS using Bash Script
 
 ## Project Overview
-This project demonstrates how to install and configure a Jenkins server on an AWS EC2 instance using a Bash script. The goal is to automate the installation process and simulate a real DevOps environment.
+This project demonstrates how to automate the installation and configuration of a Jenkins server on an AWS EC2 instance using a Bash script. The goal is to simulate a real DevOps workflow including cloud provisioning, SSH access, and CI/CD setup.
 
 ## Technologies Used
-
 - AWS EC2
-- Amazon Linux
+- Amazon Linux 2
 - Jenkins
 - Bash scripting
 - SSH
 
+## Prerequisites
+Before running this project, ensure you have:
+- AWS account with permissions to create EC2 instances
+- SSH client (Git Bash, Linux terminal, or Mac terminal)
+- AWS Key Pair (.pem file) generated from AWS console
+- Security Group configured to allow:
+  - SSH (port 22)
+  - Jenkins (port 8080)
+
 ## Project Steps
 
 ### 1. EC2 Instance Creation
+- Created an EC2 instance using Amazon Linux 2
+- Configured Security Group to allow SSH (22) and Jenkins (8080)
 
-- Created an EC2 instance on AWS
-- Configured Security Group (SSH + Port 8080)
+Screenshot:
+![EC2 Instance](./screenshots/01-ec2-instance-created.png)
 
-![EC2](./screenshots/01-ec2-instance-created.png)
+### 2. SSH Connection to EC2
+Connected to the instance using SSH
+```bash
+ssh -i <your-key.pem> ec2-user@<ec2-public-ip>
+```
+Screenshot:
+![SSH Connection](./screenshots/02-ssh-connection.png)
 
-### 2. SSH Connection
+### 3. Jenkins Installation Script
+The Jenkins installation script was created and executed directly on the EC2 instance.  
 
-- Connected to the instance using SSH
+Make script executable: 
+chmod +x installjenkins.sh
 
-![SSH](./screenshots/02-ssh-connection.png)
+Run the script:
+sudo installjenkins.sh
 
-### 3. Script Creation
+Screenshot:
+![Script Execution](./screenshots/06-jenkins-installation.png)
 
-- Created a Bash script to automate Jenkins installation
+### 4. Jenkins Service Verification
+Check Jenkins service status:
+sudo systemctl status jenkins
 
-![Script](./screenshots/04-create-script-folder.png)
+Screenshot:
+![Jenkins Running](./screenshots/07-jenkins-running.png)
 
-### 4. Script Execution
+### 5. Jenkins Web Access
+Access Jenkins in browser:
+http://<ec2-public-ip>:8080
 
-- Executed the script to install Jenkins
-
-![Install](./screenshots/06-jenkins-installation.png)
-
-### 5. Jenkins Service Verification
-
-- Verified Jenkins is running
-
-![Status](./screenshots/07-jenkins-running.png)
-
-### 6. Jenkins Web Access
-
-- Accessed Jenkins via browser
-
+Screenshot:
 ![Unlock](./screenshots/08-jenkins-unlock-screen.png)
 
-### 7. Initial Configuration
+Retrieve initial admin password:
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
-- Installed plugins and created admin user
+### 6. Jenkins Initial Setup
+- Installed suggested plugins
+- Created admin user
+- Completed setup
 
-![Setup](./screenshots/12-jenkins-ready.png)
+Screenshot:
+![Jenkins Setup](./screenshots/12-jenkins-ready.png)
 
-## Script
-
+## Installation Script
+The full script is available in the repository: installjenkins.sh
+Excerpt:
 ```bash
 #!/bin/bash
 
 # System Update
-echo "System update..."
 sudo yum update -y
 
-# Install Java (required for Jenkins)
-echo "Installing Java..."
+# Install Java
 sudo yum install -y java-17-amazon-corretto
 
-# Add Jenkins Repo
-echo "Adding Jenkins repository..."
-sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
-
-# Import Jenkins Key
-sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
-
 # Install Jenkins
-echo "Installing Jenkins..."
 sudo yum install -y jenkins
 
 # Start Jenkins
-echo "Starting Jenkins service..."
 sudo systemctl start jenkins
-
-# Enable Jenkins Startup
-sudo systemctl enable jenkins
-
-# Check status
-echo "Jenkins status:"
-sudo systemctl status jenkins
-
-# Display initial password
-echo "Jenkins initial password:"
-sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-
 ```
 
-## Key Learnings
+## Security Notes
+- Sensitive files such as `.pem`, `.key`, and `.env` are excluded using a `.gitignore` file
+- Credentials and private keys are never committed to the repository
+- Public IP addresses and sensitive information are not hardcoded
 
-- Automating infrastructure setup using Bash
-- Installing and configuring Jenkins
-- Working with AWS EC2
-- Understanding CI/CD basics
+## Key Learnings
+- AWS EC2 provisioning and configuration
+- SSH access to remote servers
+- Bash scripting for automation
+- Jenkins installation and CI/CD basics
+- Security best practices in DevOps
 
 ## Future Improvements
-
-- Automate with Terraform
-- Add Jenkins pipelines
-- Integrate with GitHub
+- Automate provisioning using Terraform
+- Implement Jenkins pipelines
+- Integrate GitHub webhooks for CI/CD automation
 
 # Author
 MOHAMED Anlinourdine
