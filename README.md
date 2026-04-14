@@ -74,8 +74,11 @@ Screenshot:
 ![Jenkins Setup](./screenshots/12-jenkins-ready.png)
 
 ## Installation Script
-The full script is available in the repository: installjenkins.sh
+The full script is available in the repository: 
+installjenkins.sh
+
 Excerpt:
+
 ```bash
 #!/bin/bash
 
